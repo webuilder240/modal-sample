@@ -7,8 +7,38 @@ export type ModalQueryParams = {
   query: Record<string, string>
 }
 
-export type Modal =  {
-  view: Component
+// interface Modal {
+//   name: string
+//   params: any
+//   queryParams?: ModalQueryParams
+//   view:
+// }
+
+export class Modal {
+  name: string
+  params: any
+  queryParams?: ModalQueryParams
+  view: Component | undefined
+
+  constructor(options: IModal) {
+    this.name = options.name
+    this.params = options.params
+    this.queryParams = options.queryParams
+    const v = findModalView(this.name)
+    if (v) {
+      this.view = v.view
+    }
+  }
+}
+
+// export type Modal =  {
+//   name: string,
+//   params: any
+//   queryParams?: ModalQueryParams
+// }
+
+export type IModal =  {
+  name: string,
   params: any
   queryParams?: ModalQueryParams
 }
@@ -46,7 +76,7 @@ function init() {
           modalParams.query[value] = v
         }
       }
-      const modal = {view: modalView.view, params: modalParams.query, queryParams: modalParams}
+      const modal = new Modal({name: modalString, params: modalParams.query, queryParams: modalParams})
       state.modals.push(modal)
     }
   }
@@ -58,7 +88,7 @@ const actions = {
   push: (state: ModalState, modal: Modal) => {
     state.modals.push(modal)
     if (modal.queryParams) {
-      state.beforeUrl =  new URL(location.href)
+      state.beforeUrl = new URL(location.href)
       const afterUrl = new URL(location.href);
       afterUrl.searchParams.set("modal", modal.queryParams.name)
 
@@ -71,6 +101,7 @@ const actions = {
       history.replaceState("modal", "", `${afterUrl.toString()}`)
     }
   },
+
   pop: (state: ModalState) => {
     const currentUrl = new URL(location.href)
     state.beforeUrl = currentUrl
@@ -89,6 +120,7 @@ const actions = {
         history.replaceState("modal", "", `${state.beforeUrl}`)
       }
     } else {
+      // history.replaceState("modal", "", `${state.beforeUrl}`)
       const modalString = currentUrl.searchParams.get("modal")
       if (modalString) {
         currentUrl.searchParams.delete("modal")

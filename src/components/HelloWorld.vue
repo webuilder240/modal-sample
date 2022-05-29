@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { Modal } from "@/Stores/ModalViewStore";
 import FirstModal from "@/components/modal/FirstModal.vue";
 import SecondModal from "@/components/modal/SecondModal.vue";
 import modalViewStore from "@/Stores/ModalViewStore"
@@ -31,13 +32,15 @@ export default {
       this.modalState = modalViewStore.state.modals
     },
     openSecondModal() {
-      modalViewStore.dispatch("push", {view: SecondModal, params: {}})
+      const modal = new Modal({name: "second_modal", params: {}})
+      modalViewStore.dispatch("push", modal)
     },
     openFirstModal() {
-      modalViewStore.dispatch("push", {view: FirstModal, params: {}})
+      const modal = new Modal({name: "first_modal", params: {}})
+      modalViewStore.dispatch("push", modal)
     },
     openFirstModalWithMessage() {
-      modalViewStore.dispatch("push", {view: FirstModal, 
+      const modal = new Modal({name: "first_modal", 
         params: {message: "Hello World"}, 
         queryParams: {
           name: "first_modal",
@@ -46,6 +49,7 @@ export default {
           }
         }
       })
+      modalViewStore.dispatch("push", modal)
     },
   }
 }

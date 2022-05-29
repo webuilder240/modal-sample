@@ -24,7 +24,7 @@ export default Vue.extend({
   methods: {
     openSecondModal(): void {
       // 内部でSecondModalをCallしているとなぜか動かない
-      const modal: Modal = {view: SecondModal, params: {}}
+      const modal = new Modal({name: "second_modal", params: {}})
       modalViewStore.dispatch("push", modal)
     }
   },
