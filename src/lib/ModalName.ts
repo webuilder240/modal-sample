@@ -1,10 +1,10 @@
-import { VueConstructor } from "vue"
+import { VueConstructor, Component } from "vue"
 import FirstModal from "@/components/modal/FirstModal.vue";
 import SecondModal from "@/components/modal/SecondModal.vue";
 
 export type ModalView =  {
   name: string,
-  view: VueConstructor
+  view: Component
 }
 
 export const modalViews: ModalView[] = [
@@ -21,8 +21,6 @@ export const modalViews: ModalView[] = [
     view: FirstModal
   }
 ]
-
-debugger
 
 export function findModalView(name: string): ModalView | undefined {
   const index = modalViews.findIndex((modalView) => modalView.name === name)

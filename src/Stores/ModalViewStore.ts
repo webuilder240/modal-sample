@@ -1,6 +1,6 @@
 import { createStore } from "@/lib/CreateStore";
-import { VueConstructor } from "vue";
-import { findModalView } from "@/lib/ModalName";
+import { Component, VueConstructor } from "vue";
+import { findModalView, findModalViewComponent } from "@/lib/ModalName";
 
 export type ModalQueryParams = {
   name: string,
@@ -8,21 +8,24 @@ export type ModalQueryParams = {
 }
 
 export type Modal =  {
-  view: VueConstructor
+  view: Component
   params: any
   queryParams?: ModalQueryParams
 }
 
 export type ModalState = {
-  modals: Modal[]
+  modals: Modal[],
+  beforeUrl: URL | null
 }
 
 const state: ModalState = {
-  modals: []
+  modals: [],
+  beforeUrl: null 
 }
 
 function init() {
   const currentUrl = new URL(location.href);
+  state.beforeUrl = currentUrl
   const modalString = currentUrl.searchParams.get("modal");
 
   // 再生する機能
@@ -55,17 +58,45 @@ const actions = {
   push: (state: ModalState, modal: Modal) => {
     state.modals.push(modal)
     if (modal.queryParams) {
-      const queryParams = modal.queryParams
-      window.history.replaceState("modal", "", `${location.href}/?modal=${queryParams.name}`)
+      state.beforeUrl =  new URL(location.href)
+      const afterUrl = new URL(location.href);
+      afterUrl.searchParams.set("modal", modal.queryParams.name)
+
+      for (const key in modal.queryParams.query) {
+        const value = modal.queryParams.query[key]
+        afterUrl.searchParams.set(key, value)
+      }
+
+      // 現状のURLにパラメータを追加する
+      history.replaceState("modal", "", `${afterUrl.toString()}`)
     }
   },
   pop: (state: ModalState) => {
+    const currentUrl = new URL(location.href)
+    state.beforeUrl = currentUrl
     const popModal = state.modals.pop()
     if (popModal?.queryParams) {
-      window.history.replaceState("modal", "", `/`)
+      if (state.modals.length === 0) {
+        const queryParams = popModal.queryParams
+        if (queryParams) {
+          for (const key in queryParams.query) {
+            currentUrl.searchParams.delete(key)
+          }
+        }
+        currentUrl.searchParams.delete("modal")
+        history.replaceState("modal", "", `${state.beforeUrl}`)
+      } else {
+        history.replaceState("modal", "", `${state.beforeUrl}`)
+      }
+    } else {
+      const modalString = currentUrl.searchParams.get("modal")
+      if (modalString) {
+        currentUrl.searchParams.delete("modal")
+        history.replaceState("modal", "", `${currentUrl.toString()}`)
+      }
     }
   }
 }
-
 init()
+
 export default createStore({state, actions})

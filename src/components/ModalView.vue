@@ -15,7 +15,7 @@
         modalState: []
       }
     },
-    created() {
+    mounted() {
       this.modalState = modalViewStore.state.modals
       modalViewStore.onChange(() => {
         this._onChange()

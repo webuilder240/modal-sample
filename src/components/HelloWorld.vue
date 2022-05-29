@@ -6,6 +6,10 @@
   <p>
     <button @click="openSecondModal">Open Call SecondModal</button>
   </p>
+
+  <p>
+    <button @click="openFirstModalWithMessage">Open Call ModalWithMessage</button>
+  </p>
   <div v-for="modal, key in modalState" :key="key" v-text="modal"></div>
 </div>
 </template>
@@ -27,18 +31,18 @@ export default {
       this.modalState = modalViewStore.state.modals
     },
     openSecondModal() {
-      modalViewStore.dispatch("push", {view: SecondModal, params: {}, pushState: false})
+      modalViewStore.dispatch("push", {view: SecondModal, params: {}})
     },
     openFirstModal() {
-      modalViewStore.dispatch("push", {view: FirstModal, params: {}, pushState: false})
+      modalViewStore.dispatch("push", {view: FirstModal, params: {}})
     },
     openFirstModalWithMessage() {
-      modalViewStore.dispatch("push", {view: FirstModal, params: {message: "Hello World"}, 
+      modalViewStore.dispatch("push", {view: FirstModal, 
+        params: {message: "Hello World"}, 
         queryParams: {
           name: "first_modal",
           query: {
-            "test": "hello_world",
-            "dispatch": "hello"
+            "message": "Hello World",
           }
         }
       })
