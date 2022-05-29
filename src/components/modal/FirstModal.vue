@@ -14,7 +14,6 @@
 
 import Vue from "vue"
 import BaseModalMixin from "@/mixins/BaseModalMixin"
-import SecondModal from "./SecondModal.vue"
 import { Modal } from "@/Stores/ModalViewStore";
 import modalViewStore from "@/Stores/ModalViewStore";
 

@@ -1,18 +1,11 @@
 import { createStore } from "@/lib/CreateStore";
-import { Component, VueConstructor } from "vue";
-import { findModalView, findModalViewComponent } from "@/lib/ModalName";
+import { Component } from "vue";
+import { findModalView } from "@/lib/ModalName";
 
 export type ModalQueryParams = {
   name: string,
   query: Record<string, string>
 }
-
-// interface Modal {
-//   name: string
-//   params: any
-//   queryParams?: ModalQueryParams
-//   view:
-// }
 
 export class Modal {
   name: string
@@ -31,12 +24,6 @@ export class Modal {
   }
 }
 
-// export type Modal =  {
-//   name: string,
-//   params: any
-//   queryParams?: ModalQueryParams
-// }
-
 export type IModal =  {
   name: string,
   params: any
@@ -51,35 +38,6 @@ export type ModalState = {
 const state: ModalState = {
   modals: [],
   beforeUrl: null 
-}
-
-function init() {
-  const currentUrl = new URL(location.href);
-  state.beforeUrl = currentUrl
-  const modalString = currentUrl.searchParams.get("modal");
-
-  // 再生する機能
-  // 1. 現状のURLをパースする
-  // 2. URLにあるパラメータから逆引きする。
-  // 3. 逆引きしたModalオブジェクトから再生を行う。また、Paramsにも同様のデータを入れる。
-  if (modalString) {
-    // 値の表示
-    const modalView = findModalView(modalString)
-    if (modalView) {
-      let modalParams: ModalQueryParams = {
-        name: modalString,
-        query: {}
-      }
-      for (const value of currentUrl.searchParams.keys()) {
-        const v = currentUrl.searchParams.get(value)
-        if (v) {
-          modalParams.query[value] = v
-        }
-      }
-      const modal = new Modal({name: modalString, params: modalParams.query, queryParams: modalParams})
-      state.modals.push(modal)
-    }
-  }
 }
 
 // 保持する機能
@@ -120,15 +78,44 @@ const actions = {
         history.replaceState("modal", "", `${state.beforeUrl}`)
       }
     } else {
-      // history.replaceState("modal", "", `${state.beforeUrl}`)
       const modalString = currentUrl.searchParams.get("modal")
-      if (modalString) {
+      if (popModal?.name === modalString) {
         currentUrl.searchParams.delete("modal")
         history.replaceState("modal", "", `${currentUrl.toString()}`)
       }
     }
   }
 }
+
+function init() {
+  const currentUrl = new URL(location.href);
+  state.beforeUrl = currentUrl
+  const modalString = currentUrl.searchParams.get("modal");
+
+  // 再生する機能
+  // 1. 現状のURLをパースする
+  // 2. URLにあるパラメータから逆引きする。
+  // 3. 逆引きしたModalオブジェクトから再生を行う。また、Paramsにも同様のデータを入れる。
+  if (modalString) {
+    // 値の表示
+    const modalView = findModalView(modalString)
+    if (modalView) {
+      const modalParams: ModalQueryParams = {
+        name: modalString,
+        query: {}
+      }
+      for (const value of currentUrl.searchParams.keys()) {
+        const v = currentUrl.searchParams.get(value)
+        if (v) {
+          modalParams.query[value] = v
+        }
+      }
+      const modal = new Modal({name: modalString, params: modalParams.query, queryParams: modalParams})
+      state.modals.push(modal)
+    }
+  }
+}
+
 init()
 
 export default createStore({state, actions})
