@@ -14,12 +14,8 @@
 import FirstModal from "@/components/modal/FirstModal.vue";
 import SecondModal from "@/components/modal/SecondModal.vue";
 import modalViewStore from "@/Stores/ModalViewStore"
-import { ModalQueryParams } from "@/Stores/ModalViewStore"
 
 export default {
-  mounted() {
-    this.openFirstModalWithMessage()
-  },
   created() {
     this.modalState = modalViewStore.state.modals
     modalViewStore.onChange(() => {
