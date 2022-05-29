@@ -14,6 +14,7 @@
 import FirstModal from "@/components/modal/FirstModal.vue";
 import SecondModal from "@/components/modal/SecondModal.vue";
 import modalViewStore from "@/Stores/ModalViewStore"
+import { ModalQueryParams } from "@/Stores/ModalViewStore"
 
 export default {
   mounted() {
@@ -36,7 +37,15 @@ export default {
       modalViewStore.dispatch("push", {view: FirstModal, params: {}, pushState: false})
     },
     openFirstModalWithMessage() {
-      modalViewStore.dispatch("push", {view: FirstModal, params: {message: "Hello World"}, pushState: true})
+      modalViewStore.dispatch("push", {view: FirstModal, params: {message: "Hello World"}, 
+        queryParams: {
+          name: "first_modal",
+          query: {
+            "test": "hello_world",
+            "dispatch": "hello"
+          }
+        }
+      })
     },
   }
 }

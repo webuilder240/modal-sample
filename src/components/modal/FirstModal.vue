@@ -21,7 +21,7 @@ export default Vue.extend({
   mixins: [BaseModalMixin],
   methods: {
     openSecondModal(): void {
-      const modal: Modal = {view: SecondModal, params: {}, pushState: false}
+      const modal: Modal = {view: SecondModal, params: {}}
       modalViewStore.dispatch("push", modal)
     }
   },
