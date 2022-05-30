@@ -5,21 +5,33 @@ import { EventEmitter } from "events";
 
 export const emitter = new EventEmitter()
 
-export type ModalQueryParams = {
-  name: string,
-  query: Record<string, string>
+function generateUuid() {
+  // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+  // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+  let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+  for (let i = 0, len = chars.length; i < len; i++) {
+      switch (chars[i]) {
+          case "x":
+              chars[i] = Math.floor(Math.random() * 16).toString(16);
+              break;
+          case "y":
+              chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+              break;
+      }
+  }
+  return chars.join("");
 }
 
 export class Modal {
-  name: string
-  params: any
-  queryParams?: ModalQueryParams
+  readonly id: string
+  readonly name: string
+  readonly params: any
   view: Component | undefined
 
   constructor(options: IModal) {
+    this.id = generateUuid()
     this.name = options.name
     this.params = options.params
-    this.queryParams = options.queryParams
     const v = findModalView(this.name)
     if (v) {
       this.view = v.view
@@ -30,21 +42,16 @@ export class Modal {
 export type IModal = {
   name: string,
   params: any
-  queryParams?: ModalQueryParams
 }
 
 export type ModalState = {
   modals: Modal[],
-  beforeUrl: URL | null
 }
 
 const state: ModalState = {
   modals: [],
-  beforeUrl: null 
 }
 
-// 保持する機能
-// 現状のURLをパースする。
 const actions = {
   push: (state: ModalState, modal: Modal) => {
     state.modals.push(modal)
@@ -52,8 +59,6 @@ const actions = {
   },
 
   pop: (state: ModalState) => {
-    const currentUrl = new URL(location.href)
-    state.beforeUrl = currentUrl
     const popModal = state.modals.pop()
     emitter.emit("modal.pop", popModal)
   }
