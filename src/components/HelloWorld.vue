@@ -31,18 +31,12 @@ export default {
     })
 
     this.setModalFromGetParams()
-
-    emitter.on("modal.push", (modal) => {
-      if (modal.name === "first_modal") {
-        this.pushFirstModalUrl(modal)
-      }
-    })
-
-    emitter.on("modal.pop", (modal) => {
-      if (modal.name === "first_modal") {
-        this.popFirstModalUrl()
-      }
-    })
+    emitter.on("modal.push", this.pushFirstModalUrl)
+    emitter.on("modal.pop", this.popFirstModalUrl)
+  },
+  beforeDestroy() {
+    emitter.removeListener("modal.push", this.pushFirstModalUrl)
+    emitter.removeListener("modal.pop", this.popFirstModalUrl)
   },
   methods: {
     _onChange() {
@@ -75,18 +69,22 @@ export default {
       }
     },
     pushFirstModalUrl(modal) {
-      const currentURL = new URL(location.href)
-      currentURL.searchParams.set("modal", modal.name)
-      if (modal.params?.message) {
-        currentURL.searchParams.set("message", modal.params.message)
+      if (modal.name === "first_modal") {
+        const currentURL = new URL(location.href)
+        currentURL.searchParams.set("modal", modal.name)
+        if (modal.params?.message) {
+          currentURL.searchParams.set("message", modal.params.message)
+        }
+        history.replaceState(modal.name, "", currentURL.href)
       }
-      history.replaceState(modal.name, "", currentURL.href)
     },
-    popFirstModalUrl() {
-      const currentURL = new URL(location.href)
-      currentURL.searchParams.delete("modal")
-      currentURL.searchParams.delete("message")
-      history.replaceState("", "", currentURL.href)
+    popFirstModalUrl(modal) {
+      if (modal.name === "first_modal") {
+        const currentURL = new URL(location.href)
+        currentURL.searchParams.delete("modal")
+        currentURL.searchParams.delete("message")
+        history.replaceState("", "", currentURL.href)
+      }
     },
   }
 }
