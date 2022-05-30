@@ -16,9 +16,8 @@
 
 <script>
 import { Modal } from "@/Stores/ModalViewStore";
-import FirstModal from "@/components/modal/FirstModal.vue";
-import SecondModal from "@/components/modal/SecondModal.vue";
 import modalViewStore from "@/Stores/ModalViewStore"
+import { emitter } from "@/Stores/ModalViewStore"
 
 export default {
   created() {
@@ -26,8 +25,47 @@ export default {
     modalViewStore.onChange(() => {
       this._onChange()
     })
+
+    this.setModalFromGetParams()
+
+    emitter.on("modal.push", (modal) => {
+      if (modal.name === "first_modal") {
+        this.pushFirstModalUrl(modal)
+      }
+    })
+
+    emitter.on("modal.pop", (modal) => {
+      if (modal.name === "first_modal") {
+        this.popFirstModalUrl()
+      }
+    })
   },
   methods: {
+    setModalFromGetParams() {
+      const currentURL = new URL(location.href)
+      const modalString = currentURL.searchParams.get("modal")
+      if (modalString === "first_modal") {
+        const message = currentURL.searchParams.get("message")
+        if (message) {
+          const modal = new Modal({name: modalString, params: {message: message}})
+          modalViewStore.dispatch("push", modal)
+        }
+      }
+    },
+    pushFirstModalUrl(modal) {
+      const currentURL = new URL(location.href)
+      currentURL.searchParams.set("modal", modal.name)
+      if (modal.params.message) {
+        currentURL.searchParams.set("message", modal.params.message)
+      }
+      history.replaceState(modal.name, "", currentURL.href)
+    },
+    popFirstModalUrl() {
+      const currentURL = new URL(location.href)
+      currentURL.searchParams.delete("modal")
+      currentURL.searchParams.delete("message")
+      history.replaceState("", "", currentURL.href)
+    },
     _onChange() {
       this.modalState = modalViewStore.state.modals
     },
@@ -40,15 +78,7 @@ export default {
       modalViewStore.dispatch("push", modal)
     },
     openFirstModalWithMessage() {
-      const modal = new Modal({name: "first_modal", 
-        params: {message: "Hello World"}, 
-        queryParams: {
-          name: "first_modal",
-          query: {
-            "message": "Hello World",
-          }
-        }
-      })
+      const modal = new Modal({name: "first_modal", params: {message: "Hello World"}})
       modalViewStore.dispatch("push", modal)
     },
   }
