@@ -1,4 +1,4 @@
-import { VueConstructor, Component } from "vue"
+import { Component } from "vue"
 import FirstModal from "@/components/modal/FirstModal.vue";
 import SecondModal from "@/components/modal/SecondModal.vue";
 

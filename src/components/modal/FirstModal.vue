@@ -10,7 +10,7 @@
   
 </template>
 
-<script lang="ts">
+<script>
 
 import Vue from "vue"
 import BaseModalMixin from "@/mixins/BaseModalMixin"
@@ -21,14 +21,13 @@ export default Vue.extend({
   name: "FirstModal",
   mixins: [BaseModalMixin],
   methods: {
-    openSecondModal(): void {
-      // 内部でSecondModalをCallしているとなぜか動かない
+    openSecondModal() {
       const modal = new Modal({name: "second_modal", params: {}})
       modalViewStore.dispatch("push", modal)
     }
   },
   computed: {
-    message(): string {
+    message() {
       if (this.params?.message) {
         return this.params.message
       } else {
