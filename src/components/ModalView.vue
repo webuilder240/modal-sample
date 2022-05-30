@@ -12,14 +12,11 @@
   export default {
     data() {
       return {
-        modalState: []
+        modalState: modalViewStore.state.modals
       }
     },
     mounted() {
-      this.modalState = modalViewStore.state.modals
-      modalViewStore.onChange(() => {
-        this._onChange()
-      })
+      modalViewStore.onChange(this._onChange.bind(this))
     },
     methods: {
       push(modal) {

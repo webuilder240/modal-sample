@@ -19,6 +19,7 @@ import { Modal } from "@/Stores/ModalViewStore";
 import modalViewStore from "@/Stores/ModalViewStore"
 import { emitter } from "@/Stores/ModalViewStore"
 
+
 export default {
   data() {
     return {
@@ -26,10 +27,7 @@ export default {
     }
   },
   created() {
-    modalViewStore.onChange(() => {
-      this._onChange()
-    })
-
+    modalViewStore.onChange(this._onChange.bind(this))
     this.setModalFromGetParams()
     emitter.on("modal.push", this.pushFirstModalUrl)
     emitter.on("modal.pop", this.popFirstModalUrl)
@@ -58,14 +56,16 @@ export default {
       const currentURL = new URL(location.href)
       const modalString = currentURL.searchParams.get("modal")
       if (modalString === "first_modal") {
-        const message = currentURL.searchParams.get("message")
-        let modal = null
-        if (message) {
-          modal = new Modal({name: modalString, params: {message: message}})
-        } else {
-          modal = new Modal({name: modalString, params: {}})
+        if (this.modalState.findIndex((el) => el.name === "first_modal") === -1) {
+          const message = currentURL.searchParams.get("message")
+          let modal = null
+          if (message) {
+            modal = new Modal({name: modalString, params: {message: message}})
+          } else {
+            modal = new Modal({name: modalString, params: {}})
+          }
+          modalViewStore.dispatch("push", modal)
         }
-        modalViewStore.dispatch("push", modal)
       }
     },
     pushFirstModalUrl(modal) {
@@ -85,7 +85,7 @@ export default {
         currentURL.searchParams.delete("message")
         history.replaceState("", "", currentURL.href)
       }
-    },
+    }
   }
 }
 </script>
