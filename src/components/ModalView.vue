@@ -8,6 +8,7 @@
 
 <script>
   import modalViewStore from "@/Stores/ModalViewStore"
+  import { emitter } from "@/Stores/ModalViewStore"
 
   export default {
     data() {
@@ -15,10 +16,22 @@
         modalState: modalViewStore.state.modals
       }
     },
-    mounted() {
+    created() {
       modalViewStore.onChange(this._onChange.bind(this))
+      emitter.on("modal.push", this.loggingModalPush)
+      emitter.on("modal.pop", this.loggingModalPop)
+    },
+    beforeDestroy() {
+      emitter.removeListener("modal.push", this.loggingModalPush)
+      emitter.removeListener("modal.pop", this.loggingModalPop)
     },
     methods: {
+      loggingModalPush(pushModal) {
+        console.log(`Logging Modal Push ${pushModal.view.options.name} params: ${pushModal.params}`)
+      },
+      loggingModalPop(popModal) {
+        console.log(`Logging Modal Pop ${popModal.view.options.name} params: ${popModal.params}`)
+      },
       push(modal) {
         modalViewStore.dispatch("push", modal)
       },
