@@ -1,6 +1,5 @@
 import { createStore } from "@/lib/CreateStore";
 import { Component } from "vue";
-import { findModalView } from "@/lib/ModalName";
 import { EventEmitter } from "events";
 
 export const emitter = new EventEmitter()
@@ -22,26 +21,22 @@ function generateUuid() {
   return chars.join("");
 }
 
+export type IModal = {
+  name: string,
+  view: Component,
+  params: any
+}
+
 export class Modal {
   readonly id: string
-  readonly name: string
   readonly params: any
-  view: Component | undefined
+  readonly view: Component
 
   constructor(options: IModal) {
     this.id = generateUuid()
-    this.name = options.name
     this.params = options.params
-    const v = findModalView(this.name)
-    if (v) {
-      this.view = v.view
-    }
+    this.view = options.view
   }
-}
-
-export type IModal = {
-  name: string,
-  params: any
 }
 
 export type ModalState = {

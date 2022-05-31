@@ -18,7 +18,8 @@
 import { Modal } from "@/Stores/ModalViewStore";
 import modalViewStore from "@/Stores/ModalViewStore"
 import { emitter } from "@/Stores/ModalViewStore"
-
+import FirstModal from './modal/FirstModal.vue';
+import SecondModal from "./modal/SecondModal.vue"
 
 export default {
   data() {
@@ -41,37 +42,37 @@ export default {
       this.modalState = modalViewStore.state.modals
     },
     openSecondModal() {
-      const modal = new Modal({name: "second_modal", params: {}})
+      const modal = new Modal({view: SecondModal, params: {}})
       modalViewStore.dispatch("push", modal)
     },
     openFirstModal() {
-      const modal = new Modal({name: "first_modal", params: {}})
+      const modal = new Modal({view: FirstModal, params: {}})
       modalViewStore.dispatch("push", modal)
     },
     openFirstModalWithMessage() {
-      const modal = new Modal({name: "first_modal", params: {message: "Hello World"}})
+      const modal = new Modal({view: FirstModal, params: {message: "Hello World"}})
       modalViewStore.dispatch("push", modal)
     },
     setModalFromGetParams() {
       const currentURL = new URL(location.href)
       const modalString = currentURL.searchParams.get("modal")
-      if (modalString === "first_modal") {
-        if (this.modalState.findIndex((el) => el.name === "first_modal") === -1) {
+      if (modalString === "FirstModal") {
+        if (this.modalState.findIndex((el) => el.name === "FirstModal") === -1) {
           const message = currentURL.searchParams.get("message")
           let modal = null
           if (message) {
-            modal = new Modal({name: modalString, params: {message: message}})
+            modal = new Modal({view: FirstModal, params: {message: message}})
           } else {
-            modal = new Modal({name: modalString, params: {}})
+            modal = new Modal({view: FirstModal, params: {}})
           }
           modalViewStore.dispatch("push", modal)
         }
       }
     },
     pushFirstModalUrl(modal) {
-      if (modal.name === "first_modal") {
+      if (modal.view === FirstModal) {
         const currentURL = new URL(location.href)
-        currentURL.searchParams.set("modal", modal.name)
+        currentURL.searchParams.set("modal", modal.view.options.name)
         if (modal.params?.message) {
           currentURL.searchParams.set("message", modal.params.message)
         }
@@ -79,7 +80,7 @@ export default {
       }
     },
     popFirstModalUrl(modal) {
-      if (modal.name === "first_modal") {
+      if (modal.view === FirstModal) {
         const currentURL = new URL(location.href)
         currentURL.searchParams.delete("modal")
         currentURL.searchParams.delete("message")
