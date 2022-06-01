@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="modalOverlay" @click.self="pop" v-if="renderModalOverlay">
-    <component v-for="(modal, index) in modalState" :key="index" :is="modal.view" :close-modal="pop" :params="modal.params" />
+    <component v-for="(modal, index) in modalState" :key="index" :is="modal.component" :close-modal="pop" :params="modal.params" />
   </div>
 </div>
 </template>
@@ -27,10 +27,10 @@
     },
     methods: {
       loggingModalPush(pushModal) {
-        console.log(`Logging Modal Push ${pushModal.view.options.name} params: ${pushModal.params}`)
+        console.log(`Logging Modal Push ${pushModal.component.options.name} params: ${pushModal.params}`)
       },
       loggingModalPop(popModal) {
-        console.log(`Logging Modal Pop ${popModal.view.options.name} params: ${popModal.params}`)
+        console.log(`Logging Modal Pop ${popModal.component.options.name} params: ${popModal.params}`)
       },
       push(modal) {
         modalViewStore.dispatch("push", modal)
@@ -44,7 +44,7 @@
     }, 
     computed: {
       currentComponent() {
-        return this.current?.view
+        return this.current?.component
       },
       renderModalOverlay() {
         return this.modalState.length > 0

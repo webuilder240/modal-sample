@@ -25,11 +25,11 @@ export default Vue.extend({
   mixins: [BaseModalMixin],
   methods: {
     openSecondModal() {
-      const modal = new Modal({view: SecondModal, params: {}})
+      const modal = new Modal({component: SecondModal, params: {}})
       modalViewStore.dispatch("push", modal)
     },
     openThirdModal() {
-      const modal = new Modal({view: ThirdModal, params: {}})
+      const modal = new Modal({component: ThirdModal, params: {}})
       modalViewStore.dispatch("push", modal)
     }
   },

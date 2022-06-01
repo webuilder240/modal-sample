@@ -23,23 +23,23 @@ function generateUuid() {
 
 export type IModal = {
   name: string,
-  view: Component,
+  component: Component,
   params: any
 }
 
 export class Modal {
   readonly id: string
   readonly params: any
-  readonly view: Component
+  readonly component: Component
 
   constructor(options: IModal) {
     this.id = generateUuid()
     this.params = options.params
-    this.view = options.view
+    this.component = options.component
   }
 }
 
-export type ModalState = {
+type ModalState = {
   modals: Modal[],
 }
 

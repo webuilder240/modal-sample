@@ -42,15 +42,15 @@ export default {
       this.modalState = modalViewStore.state.modals
     },
     openSecondModal() {
-      const modal = new Modal({view: SecondModal, params: {}})
+      const modal = new Modal({component: SecondModal, params: {}})
       modalViewStore.dispatch("push", modal)
     },
     openFirstModal() {
-      const modal = new Modal({view: FirstModal, params: {}})
+      const modal = new Modal({component: FirstModal, params: {}})
       modalViewStore.dispatch("push", modal)
     },
     openFirstModalWithMessage() {
-      const modal = new Modal({view: FirstModal, params: {message: "Hello World"}})
+      const modal = new Modal({component: FirstModal, params: {message: "Hello World"}})
       modalViewStore.dispatch("push", modal)
     },
     setModalFromGetParams() {
@@ -61,18 +61,18 @@ export default {
           const message = currentURL.searchParams.get("message")
           let modal = null
           if (message) {
-            modal = new Modal({view: FirstModal, params: {message: message}})
+            modal = new Modal({component: FirstModal, params: {message: message}})
           } else {
-            modal = new Modal({view: FirstModal, params: {}})
+            modal = new Modal({component: FirstModal, params: {}})
           }
           modalViewStore.dispatch("push", modal)
         }
       }
     },
     pushFirstModalUrl(modal) {
-      if (modal.view === FirstModal) {
+      if (modal.component === FirstModal) {
         const currentURL = new URL(location.href)
-        currentURL.searchParams.set("modal", modal.view.options.name)
+        currentURL.searchParams.set("modal", modal.component.options.name)
         if (modal.params?.message) {
           currentURL.searchParams.set("message", modal.params.message)
         }
@@ -80,7 +80,7 @@ export default {
       }
     },
     popFirstModalUrl(modal) {
-      if (modal.view === FirstModal) {
+      if (modal.component === FirstModal) {
         const currentURL = new URL(location.href)
         currentURL.searchParams.delete("modal")
         currentURL.searchParams.delete("message")
