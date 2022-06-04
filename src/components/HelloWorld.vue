@@ -11,6 +11,9 @@
     <button @click="openFirstModalWithMessage">Open Call ModalWithMessage</button>
   </p>
   <div v-for="modal in modalState" :key="modal.id" v-text="modal"></div>
+  <div>
+    <FetchUser />
+  </div>
 </div>
 </template>
 
@@ -20,8 +23,12 @@ import modalViewStore from "@/Stores/ModalViewStore"
 import { emitter } from "@/Stores/ModalViewStore"
 import FirstModal from './modal/FirstModal.vue';
 import SecondModal from "./modal/SecondModal.vue"
+import FetchUser from './FetchUser.vue';
 
 export default {
+  components: {
+    FetchUser
+  },
   data() {
     return {
       modalState: modalViewStore.state.modals

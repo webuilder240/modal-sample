@@ -1,12 +1,6 @@
 <template>
 <div>
-  <AsyncComponent @update-user="updateUser" ref="async-component" />
-  <div v-if="user">
-    UserName: {{ user.login }}
-    <br>
-    Url: {{ user.url }}
-  </div>
-  <button @click="fetchUser"> reFetch User </button>
+
   <div class="modalOverlay" @click.self="pop" v-if="renderModalOverlay">
     <component v-for="modal in modalState" :key="modal.id" :is="modal.component" :close-modal="pop" :params="modal.params" />
   </div>
@@ -15,16 +9,11 @@
 
 <script>
   import modalViewStore from "@/Stores/ModalViewStore"
-  import AsyncComponent from "../components/async/ModalView.vue"
   import { emitter } from "@/Stores/ModalViewStore"
 
   export default {
-    components: {
-      AsyncComponent
-    },
     data() {
       return {
-        user: null,
         modalState: modalViewStore.state.modals
       }
     },
@@ -38,13 +27,6 @@
       emitter.removeListener("modal.pop", this.loggingModalPop)
     },
     methods: {
-      fetchUser() {
-        alert("from Parent Component")
-        this.$refs['async-component'].fetchWebApi()
-      },
-      updateUser(user) {
-        this.user = user
-      },
       loggingModalPush(pushModal) {
         console.log(`Logging Modal Push ${pushModal.component.options.name} params: ${pushModal.params}`)
       },
