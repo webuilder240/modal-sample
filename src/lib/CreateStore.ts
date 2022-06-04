@@ -23,8 +23,10 @@ class BaseStore {
 
     for (const key in this.actions) {
       this.dispathcer.on(key, (params) => { 
-        this.actions[key](this._state, params)
+        const result = this.actions[key](this._state, params)
         this.emitChange()
+
+        return result
       })
     }
   }
