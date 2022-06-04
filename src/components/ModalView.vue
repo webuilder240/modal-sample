@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="modalOverlay" @click.self="pop" v-if="renderModalOverlay">
-    <component v-for="(modal, index) in modalState" :key="index" :is="modal.component" :close-modal="pop" :params="modal.params" />
+    <component v-for="modal in modalState" :key="modal.id" :is="modal.component" :close-modal="pop" :params="modal.params" />
   </div>
 </div>
 </template>
